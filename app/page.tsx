@@ -1,11 +1,30 @@
 "use client";
+import { useSession } from 'next-auth/react';
 import AboutVideo from "@/components/Introduction/AboutVideo";
 import SampleStyles from "@/components/Introduction/SampleStyles";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { ScissorsIcon, CubeTransparentIcon } from "@heroicons/react/20/solid";
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session) {
+      router.push('/auth/signin');
+    }
+  }, [session, status, router]);
+
+  if (status === 'loading') return <p>Loading...</p>;
+
+  if (!session) {
+    return <p>You need to be authenticated to view this page.</p>;
+  }
+  
   return (
     <div className="max-w-screen-2xl ">
       <div className="grid grid-cols-4 mx-auto bg-slate-100 gap-4">
